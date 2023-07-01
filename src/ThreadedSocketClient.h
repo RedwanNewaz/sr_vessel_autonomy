@@ -14,7 +14,7 @@
 #include <thread>
 #include <chrono>
 #include <queue>
-extern std::queue<std::string> payload;
+
 
 using namespace std::chrono_literals;
 
@@ -28,12 +28,14 @@ public:
 
     void Disconnect();
 
-    void Send(const std::string& message);
+    void addPayload(const std::string& message);
 
     bool IsConnected() const;
 
 private:
     void ReceiveThread();
+
+    void Send(const std::string& message);
 
     void run();
 
@@ -45,6 +47,7 @@ private:
     std::thread receiveThread_;
     bool isRunning_;
     std::thread thread_;
+    std::queue<std::string> payload_;
 };
 
 

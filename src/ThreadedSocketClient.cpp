@@ -94,10 +94,10 @@ void ThreadedSocketClient::run() {
             // Do other tasks while the client is connected
             std::string input;
 
-            if(!payload.empty())
+            if(!payload_.empty())
             {
-                Send(payload.front());
-                payload.pop();
+                Send(payload_.front());
+                payload_.pop();
             }
 //            std::cout << "[input:] ";
 //            std::getline(std::cin, input);
@@ -111,4 +111,8 @@ void ThreadedSocketClient::run() {
 
 
 
+}
+
+void ThreadedSocketClient::addPayload(const std::string &message) {
+    payload_.push(message);
 }

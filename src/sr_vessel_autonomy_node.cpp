@@ -15,7 +15,6 @@
 #include <memory>
 
 using namespace std::chrono_literals;
-std::queue<std::string> payload;
 
 namespace sea_robotics
 {
@@ -60,7 +59,7 @@ namespace sea_robotics
             double thrust_percent = 100.0 * std::min(msg->linear.x, 1.0);
             double thrust_angle = radiansToDegrees(msg->angular.z);
             std::string new_cmd = fmt::format(cmd_str_msg_, thrust_percent, thrust_angle);
-            payload.push(new_cmd);
+            srClient_->addPayload(new_cmd);
         }
     private:
         rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_sub_;
