@@ -1,0 +1,10 @@
+version: '3.0'
+
+services:
+  sr_vessel_ros2:
+    build: .
+    image: ros2:srva
+    network_mode: host
+    volumes:
+      - .:/colcon_ws/src/sr_vessel_autonomy
+    command: bash -c "source /colcon_ws/install/setup.bash && ros2 launch sr_vessel_autonomy sr_vessel_autonomy.launch.py"
