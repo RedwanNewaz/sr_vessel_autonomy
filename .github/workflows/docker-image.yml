@@ -14,5 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ros2-sr-vessel-autonomy:latest
+    - name: Build & Push the Docker image
+      run: |
+        echo "${{ secrets.DOCKERPW }}" | docker login -u "redwan06me" --password-stdin
+        docker build . --file Dockerfile --tag ros2-sr-vessel-autonomy:latest
+        docker push redwan06me/ros2-sr-vessel-autonomy:latest
