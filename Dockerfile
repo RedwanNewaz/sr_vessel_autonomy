@@ -10,6 +10,9 @@ WORKDIR /colcon_ws
 # Copy the package(s) into the workspace
 COPY . /colcon_ws/src/sr_vessel_autonomy
 
+# update packages 
+RUN apt update
+
 RUN rosdep install --from-paths src
 
 # Build the packages using colcon
