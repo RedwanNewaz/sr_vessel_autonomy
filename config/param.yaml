@@ -1,8 +1,8 @@
 # replace this with boat ip address 
-IP: "127.0.0.1"
-PORT: 8080
-# IP: "192.168.0.50"
-# PORT: 8001
+# IP: "127.0.0.1"
+# PORT: 8080
+IP: "192.168.0.50"
+PORT: 8001
 
 
 # range of angular velocity 
