@@ -62,8 +62,8 @@ ament_package()
 install(DIRECTORY launch
         DESTINATION share/${PROJECT_NAME})
 
-#install(DIRECTORY config
-#        DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY config
+       DESTINATION share/${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>

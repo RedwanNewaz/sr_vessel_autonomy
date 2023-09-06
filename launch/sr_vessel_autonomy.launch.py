@@ -4,6 +4,9 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch import LaunchDescription
 import os
+import yaml
+from ament_index_python.packages import get_package_share_directory
+
 
 ARGUMENTS = [
     DeclareLaunchArgument('namespace', default_value='',
@@ -12,10 +15,15 @@ ARGUMENTS = [
 
 def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
-    server_info = {
-        "IP" : '192.168.0.50',
-        "PORT": 8001
-    }
+    current_pkg_dir = get_package_share_directory('sr_vessel_autonomy')
+
+    param_file = os.path.join(current_pkg_dir, 'config', 'param.yaml')
+    with open(param_file) as file:
+        parameters = yaml.safe_load(file)
+    # server_info = {
+    #     "IP" : '192.168.0.50',
+    #     "PORT": 8001
+    # }
 
     # server_info = {
     #     "IP" : '127.0.0.1',
@@ -27,7 +35,7 @@ def generate_launch_description():
         executable='sr_vessel_autonomy',
         namespace=namespace,
         name='sr_vessel_autonomy',
-        parameters=[server_info],
+        parameters=[parameters],
         output='screen',
     )
 
