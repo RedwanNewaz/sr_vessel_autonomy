@@ -31,7 +31,7 @@ namespace sea_robotics
             auto port = this->get_parameter("PORT").get_parameter_value().get<int>();
             srClient_ = std::make_unique<ThreadedSocketClient>(ip, port);
 
-            cmd_str_msg_ = "$PSEAC,T,,{},{},*12<CR><LF>";
+            cmd_str_msg_ = "$PSEAC,T,,{},{},*12\r";
             cmd_sub_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", qos, std::bind(
                     &VesselAutonomy::cmd_callback, this, std::placeholders::_1)
             );
