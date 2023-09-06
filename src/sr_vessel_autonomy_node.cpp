@@ -56,8 +56,8 @@ namespace sea_robotics
             auto radiansToDegrees = [](double radians) {
                 return radians * (180.0 / M_PI);
             };
-            double thrust_percent = 100.0 * std::min(msg->linear.x, 1.0);
-            double thrust_angle = radiansToDegrees(msg->angular.z);
+            int thrust_percent = 70.0 * std::min(msg->linear.x, 1.0);
+            int thrust_angle = radiansToDegrees(msg->angular.z);
             std::string new_cmd = fmt::format(cmd_str_msg_, thrust_percent, thrust_angle);
             srClient_->addPayload(new_cmd);
         }
