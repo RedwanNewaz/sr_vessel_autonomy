@@ -2,18 +2,25 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <regex>
 #include <fmt/core.h>
 namespace sea_robotics
 {
+    struct GPSdata
+    {
+        double lat, lon, alt; 
+    };
     class VesselMsg
     {
     public:
         VesselMsg(const std::string& cmd_templete, double v_max, double v_min, double w_max, double w_min);
         std::string toStrMsg(double v, double w);
+        bool getGPSdata(const std::string& msg, GPSdata& gps);  
     
     protected:
         double normalize(double value, double val_min, double val_max, double max_range, double min_range);
-        std::string computeChecksum(const std::string& message);        
+        std::string computeChecksum(const std::string& message); 
+              
 
     private:
         double v_max_, v_min_; 
@@ -26,6 +33,29 @@ namespace sea_robotics
     :cmd_templete_(cmd_templete), v_max_(v_max), v_min_(v_min), w_max_(w_max), w_min_(w_min)
     {
 
+    }
+    bool VesselMsg::getGPSdata(const std::string& msg, GPSdata& gps)
+    {
+        if (msg.substr(0, 4) != "$GGA")
+            return false; 
+        // Split the GPS data by commas
+            std::vector<std::string> gps_parts;
+            std::istringstream gps_stream(msg);
+            std::string gps_part;
+            while (std::getline(gps_stream, gps_part, ',')) {
+                gps_parts.push_back(gps_part);
+            }
+
+            if (gps_parts.size() < 13) {
+                // RCLCPP_ERROR(node->get_logger(), "Invalid GPS data format");
+                return false;
+            }
+
+            // Extract relevant data from the string
+            std::string time_stamp = gps_parts[1];
+            gps.lat = std::stod(gps_parts[2]);
+            gps.lon = std::stod(gps_parts[4]);
+            gps.alt = std::stod(gps_parts[9]);
     }
 
     std::string VesselMsg::toStrMsg(double v, double w)

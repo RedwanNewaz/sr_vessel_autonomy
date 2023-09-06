@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 set(SRC_FILES
         src/ThreadedSocketClient.h
@@ -36,12 +37,14 @@ include_directories(
         ${rclcpp_INCLUDE_DIRS}
         ${geometry_msgs_INCLUDE_DIRS}
         ${fmt_INCLUDE_DIRS}
+        ${sensor_msgs_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME} src/sr_vessel_autonomy_node.cpp ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
         ${rclcpp_LIBRARIES}
         ${geometry_msgs_LIBRARIES}
+        ${sensor_msgs_LIBRARIES}
         -pthread
         fmt
         )

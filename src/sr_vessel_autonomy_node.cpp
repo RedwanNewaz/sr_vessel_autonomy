@@ -11,6 +11,7 @@
 
 #include <chrono>
 #include "geometry_msgs/msg/twist.hpp"
+#include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include "VesselMsg.h"
 #include <memory>
 

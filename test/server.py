@@ -36,7 +36,8 @@ class SimpleSocketServer:
             print("Received from client: {}".format(received_message))
 
             # Echo the received message back to the client
-            client_socket.sendall(data)
+            GPS_MSG = "$GGA,123456.78,3712.1234,N,12156.7890,W,1,08,0.9,545.4,M,46.9,M,,*3A"
+            client_socket.sendall(GPS_MSG.encode("utf-8"))
 
         client_socket.close()
         print("Connection closed with {}:{}".format(client_address[0], client_address[1]))
