@@ -14,13 +14,14 @@
 #include <thread>
 #include <chrono>
 #include <queue>
-
+#include "GpsData.h"
 
 using namespace std::chrono_literals;
+using namespace sea_robotics; 
 
 class ThreadedSocketClient {
 public:
-    ThreadedSocketClient(const std::string& serverIP, int serverPort);
+    ThreadedSocketClient(const std::string& serverIP, int serverPort, GPSDataPtr gps);
 
     ~ThreadedSocketClient();
 
@@ -48,6 +49,7 @@ private:
     bool isRunning_;
     std::thread thread_;
     std::queue<std::string> payload_;
+    GPSDataPtr gps_;
 };
 
 

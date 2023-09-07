@@ -37,7 +37,17 @@ namespace sea_robotics
 
             auto ip = this->get_parameter("IP").get_parameter_value().get<std::string>();
             auto port = this->get_parameter("PORT").get_parameter_value().get<int>();
-            srClient_ = std::make_unique<ThreadedSocketClient>(ip, port);
+            gps_ = std::make_shared<GPSData>();
+            srClient_ = std::make_unique<ThreadedSocketClient>(ip, port, gps_->getPtr());
+
+            timer_ = this->create_wall_timer(std::chrono::milliseconds(10), [this] { 
+                if(gps_->isUpdated())
+                {
+                    double lat, lon, alt; 
+                    std::tie(lat, lon, alt) = gps_->getData();
+                    gps_callback(lat, lon, alt);
+                } 
+            });
 
             cmd_str_msg_ = this->get_parameter("cmd_str_msg").get_parameter_value().get<std::string>();
             auto V_MAX = this->get_parameter("V_MAX").get_parameter_value().get<double>();
@@ -51,6 +61,8 @@ namespace sea_robotics
                     &VesselAutonomy::cmd_callback, this, std::placeholders::_1)
             );
             vesselMsg_ = std::make_unique<VesselMsg>(cmd_str_msg_, V_MAX, V_MIN, W_MAX, W_MIN);
+            gps_pub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("gps", 10);
+
 
             RCLCPP_INFO(get_logger(), "%s initialized", nodeName.c_str());
 
@@ -72,11 +84,26 @@ namespace sea_robotics
             auto new_cmd = vesselMsg_->toStrMsg(msg->linear.x, msg->angular.z);
             srClient_->addPayload(new_cmd);
         }
+
+        void gps_callback(double lat, double lon, double alt)
+        {
+            // publish sensor msg here
+            sensor_msgs::msg::NavSatFix msg; 
+            msg.header.stamp = get_clock()->now();
+            msg.latitude = lat; 
+            msg.longitude = lon; 
+            msg.altitude = alt; 
+            gps_pub_->publish(msg);
+
+        }
     private:
         rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_sub_;
+        rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr gps_pub_; 
         std::string cmd_str_msg_;
         std::unique_ptr<ThreadedSocketClient> srClient_;
-        std::unique_ptr<VesselMsg> vesselMsg_; 
+        std::unique_ptr<VesselMsg> vesselMsg_;
+        rclcpp::TimerBase::SharedPtr timer_;
+        sea_robotics::GPSDataPtr gps_; 
 
     };
 
@@ -87,7 +114,7 @@ namespace sea_robotics
 
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
-
+    
     auto vesselAutonomy = std::make_shared<sea_robotics::VesselAutonomy> ("vesselAutonomy");
     rclcpp::executors::MultiThreadedExecutor executor;
     executor.add_node(vesselAutonomy);

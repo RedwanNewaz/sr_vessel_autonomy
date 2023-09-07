@@ -1,7 +1,7 @@
 #include "ThreadedSocketClient.h"
 
-ThreadedSocketClient::ThreadedSocketClient(const std::string& serverIP, int serverPort)
-        : serverIP_(serverIP), serverPort_(serverPort), isRunning_(false), thread_() {
+ThreadedSocketClient::ThreadedSocketClient(const std::string& serverIP, int serverPort, GPSDataPtr gps)
+        : serverIP_(serverIP), serverPort_(serverPort), isRunning_(false), thread_(), gps_(gps) {
     std::memset(&serverAddress_, 0, sizeof(serverAddress_));
     serverAddress_.sin_family = AF_INET;
     serverAddress_.sin_port = htons(serverPort_);
@@ -83,7 +83,11 @@ void ThreadedSocketClient::ReceiveThread() {
             break;
         }
 
-        std::cout << "Received: " << buffer << std::endl;
+        // std::cout << "Received: " << buffer << std::endl;
+        gps_->update_data(buffer);
+        
+ 
+
     }
 }
 
